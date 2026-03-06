@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>File Cyber Crime Complaint</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
+<style>
+.complaint-container {
+    max-width: 700px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.complaint-form {
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid #00ffff;
+    border-radius: 12px;
+    padding: 35px;
+}
+
+.complaint-form h1 {
+    text-align: center;
+    color: #00ffff;
+    text-shadow: 0 0 15px #00ffff;
+    margin-bottom: 25px;
+    font-size: 24px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    color: #00ffff;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px 15px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid #00ffff;
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    font-family: inherit;
+    box-sizing: border-box;
+    transition: 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #777;
+}
+
+.form-group textarea {
+    height: 120px;
+    resize: vertical;
+}
+
+.form-group select {
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.form-group select option {
+    background: #111;
+    color: white;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.required-mark {
+    color: #ff4b4b;
+    margin-left: 3px;
+}
+
+.submit-btn {
+    margin-top: 25px;
+    padding: 14px 30px;
+    border: 2px solid #00ffff;
+    background: transparent;
+    color: #00ffff;
+    font-size: 16px;
+    font-family: 'Orbitron', sans-serif;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: 0.4s;
+    width: 100%;
+}
+
+.submit-btn:hover {
+    background: #00ffff;
+    color: black;
+    box-shadow: 0 0 20px #00ffff;
+    transform: scale(1.02);
+}
+
+.flash-error {
+    background: rgba(255, 75, 75, 0.15);
+    border: 1px solid #ff4b4b;
+    color: #ff4b4b;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.info-note {
+    text-align: center;
+    color: #777;
+    font-size: 12px;
+    margin-top: 15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+<div class="logo">Cyber Crime Portal</div>
+<div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/login">Login</a>
+</div>
+</div>
+
+<div class="complaint-container">
+<div class="complaint-form">
+
+    <h1>File Cyber Crime Complaint</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash-error">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Full Name <span class="required-mark">*</span></label>
+                <input type="text" name="name" placeholder="Your full name" required>
+            </div>
+            <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" name="phone" placeholder="e.g. +91 9876543210">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" name="email" placeholder="your.email@example.com">
+        </div>
+
+        <div class="form-group">
+            <label>Type of Cyber Crime <span class="required-mark">*</span></label>
+            <select name="crime_type" required>
+                <option value="" disabled selected>-- Select Crime Type --</option>
+                <option value="Online Fraud / Financial Scam">Online Fraud / Financial Scam</option>
+                <option value="Identity Theft">Identity Theft</option>
+                <option value="Hacking / Unauthorized Access">Hacking / Unauthorized Access</option>
+                <option value="Phishing Attack">Phishing Attack</option>
+                <option value="Ransomware / Malware Attack">Ransomware / Malware Attack</option>
+                <option value="Cyberstalking / Harassment">Cyberstalking / Harassment</option>
+                <option value="Social Media Crime">Social Media Crime</option>
+                <option value="Data Breach / Privacy Violation">Data Breach / Privacy Violation</option>
+                <option value="Email Spoofing">Email Spoofing</option>
+                <option value="Online Child Exploitation">Online Child Exploitation</option>
+                <option value="Denial of Service (DoS/DDoS)">Denial of Service (DoS/DDoS)</option>
+                <option value="SIM Swap / Mobile Fraud">SIM Swap / Mobile Fraud</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Complaint Description <span class="required-mark">*</span></label>
+            <textarea name="description" placeholder="Describe the incident in detail — when it happened, what occurred, how you were affected..." required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Suspect Information (if known)</label>
+            <textarea name="suspect_info" placeholder="Any known details: names, phone numbers, email addresses, social media profiles, URLs, IP addresses..." style="height:80px;"></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn">Submit Complaint</button>
+
+    </form>
+
+    <p class="info-note">Fields marked with <span style="color:#ff4b4b;">*</span> are required. Your complaint will be assigned a tracking ID.</p>
+
+</div>
+</div>
+
+</body>
+</html>

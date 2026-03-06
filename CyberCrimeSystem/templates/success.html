@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Evidence Uploaded</title>
+
+<style>
+
+body{
+background:linear-gradient(135deg,#020024,#090979,#00d4ff);
+font-family:Arial;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.box{
+background:rgba(0,0,0,0.85);
+padding:40px;
+border-radius:15px;
+width:500px;
+text-align:center;
+box-shadow:0 0 30px #00ffff;
+}
+
+h1{
+color:#00ffff;
+}
+
+.hash{
+word-break:break-all;
+color:#00ffcc;
+margin:15px 0;
+}
+
+.btn{
+display:inline-block;
+margin-top:20px;
+padding:12px 25px;
+background:#00ffff;
+color:black;
+text-decoration:none;
+border-radius:8px;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h1>Evidence Uploaded Successfully</h1>
+
+<p><b>File:</b> {{ filename }}</p>
+
+<p><b>SHA256 Hash:</b></p>
+
+<div class="hash">{{ file_hash }}</div>
+
+<p><b>Uploaded From IP:</b> {{ ip }}</p>
+
+<a href="/dashboard" class="btn">Back to Dashboard</a>
+
+</div>
+
+</body>
+
+</html>

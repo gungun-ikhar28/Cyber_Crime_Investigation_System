@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Investigation Dashboard</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<div class="navbar">
+
+<div class="logo">
+Cyber Crime Investigation System
+</div>
+
+<div class="nav-links">
+<a href="/">Home</a>
+<a href="#">Logout</a>
+</div>
+
+</div>
+
+
+<div class="dashboard-container">
+
+<div class="sidebar">
+
+<h3>Investigation Panel</h3>
+
+<a href="#">Dashboard</a>
+<a href="/upload">Upload Evidence</a>
+<a href="/evidence">View Evidence</a>
+<a href="/ip_tracking">IP Tracking</a>
+<a href="/verify">Hash Verification</a>
+<a href="/chat">Chat System</a>
+<a href="/report">Generate Report</a>
+<a href="/complaints">View Complaints</a>
+
+</div>
+
+
+<div class="main-panel">
+
+<h1>Investigator Dashboard</h1>
+
+<div class="cards">
+
+<a href="/upload">
+<div class="card">
+<h3>Upload Evidence</h3>
+<p>Upload digital evidence files</p>
+</div>
+</a>
+
+<a href="/evidence">
+<div class="card">
+<h3>View Evidence</h3>
+<p>Check uploaded digital evidence</p>
+</div>
+</a>
+
+<a href="/ip_tracking">
+<div class="card">
+<h3>IP Tracking</h3>
+<p>Track suspicious IP addresses</p>
+</div>
+</a>
+
+<a href="/verify">
+<div class="card">
+<h3>Hash Verification</h3>
+<p>Verify file integrity</p>
+</div>
+</a>
+
+<a href="/chat">
+<div class="card">
+<h3>Chat System</h3>
+<p>Communicate with investigators</p>
+</div>
+</a>
+
+<a href="/report">
+<div class="card">
+<h3>Generate Report</h3>
+<p>Create Chain of Custody reports</p>
+</div>
+</a>
+
+<a href="/complaints">
+<div class="card">
+<h3>View Complaints</h3>
+<p>Review filed cyber crime complaints</p>
+</div>
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

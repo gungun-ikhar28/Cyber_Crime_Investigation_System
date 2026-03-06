@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Evidence Records</title>
+
+<style>
+
+body{
+background:#0a0a0a;
+color:white;
+font-family:Arial;
+}
+
+.container{
+width:80%;
+margin:auto;
+margin-top:50px;
+}
+
+h1{
+text-align:center;
+color:#00ffff;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:30px;
+}
+
+th,td{
+border:1px solid #00ffff;
+padding:12px;
+text-align:center;
+}
+
+th{
+background:#001f1f;
+}
+
+tr:hover{
+background:#111;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Uploaded Evidence</h1>
+
+<table>
+
+<tr>
+<th>ID</th>
+<th>File Name</th>
+</tr>
+
+{% for file in files %}
+
+<tr>
+<td>{{ loop.index }}</td>
+<td>{{ file }}</td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+<div style="text-align:center; margin-top:30px;">
+<a href="/dashboard" style="display:inline-block; padding:10px 25px; border:1px solid #00ffff; color:#00ffff; text-decoration:none; border-radius:6px; transition:0.3s;">&larr; Back to Dashboard</a>
+</div>
+
+</div>
+
+</body>
+
+</html>

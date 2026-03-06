@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Upload Evidence</title>
+
+<style>
+
+body{
+font-family: Arial;
+background: linear-gradient(to right,#1d2671,#c33764);
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.container{
+background:white;
+padding:40px;
+border-radius:10px;
+width:400px;
+text-align:center;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+h2{
+margin-bottom:20px;
+}
+
+.file-input{
+border:2px dashed #aaa;
+padding:25px;
+margin-bottom:20px;
+border-radius:10px;
+cursor:pointer;
+}
+
+.file-input:hover{
+background:#f3f3f3;
+}
+
+input[type=file]{
+border:none;
+}
+
+input[type=text]{
+width:100%;
+padding:10px;
+margin-top:10px;
+margin-bottom:20px;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+button{
+background:#1d2671;
+color:white;
+padding:12px;
+width:100%;
+border:none;
+border-radius:6px;
+font-size:16px;
+cursor:pointer;
+}
+
+button:hover{
+background:#0f1450;
+}
+
+.back-link{
+display:inline-block;
+margin-top:15px;
+color:#1d2671;
+text-decoration:none;
+font-size:14px;
+}
+
+.back-link:hover{
+text-decoration:underline;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Upload Digital Evidence</h2>
+
+<form action="/upload" method="post" enctype="multipart/form-data">
+
+<div class="file-input">
+<p>Select Evidence File</p>
+<input type="file" name="file" required>
+</div>
+
+<label>Enter Evidence Hash (SHA256)</label>
+<input type="text" name="hash" placeholder="Enter Hash Value" required>
+
+<button type="submit">Upload & Verify</button>
+
+</form>
+
+<a href="/dashboard" class="back-link">&larr; Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>

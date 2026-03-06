@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Verification Result</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:linear-gradient(to right,#1d2671,#c33764);
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.box{
+background:white;
+padding:40px;
+border-radius:10px;
+text-align:center;
+width:450px;
+box-shadow:0 10px 20px rgba(0,0,0,0.2);
+}
+
+h2{
+margin-bottom:20px;
+}
+
+.hash{
+background:#f3f3f3;
+padding:10px;
+border-radius:6px;
+margin-top:10px;
+word-break:break-all;
+}
+
+button{
+margin-top:20px;
+padding:10px 20px;
+background:#1d2671;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>{{result}}</h2>
+
+<p>Actual Evidence Hash:</p>
+
+<div class="hash">
+{{actual_hash}}
+</div>
+
+<div style="margin-top:20px;">
+<a href="/upload">
+<button style="margin-right:10px;">Upload Another</button>
+</a>
+<a href="/dashboard">
+<button style="background:#333;">Back to Dashboard</button>
+</a>
+</div>
+
+</div>
+
+</body>
+</html>
