@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Verification Result</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:linear-gradient(to right,#1d2671,#c33764);
+min-height:100vh;
+display:flex;
+flex-direction:column;
+}
+
+.box{
+background:white;
+padding:40px;
+border-radius:10px;
+text-align:center;
+width:450px;
+box-shadow:0 10px 20px rgba(0,0,0,0.2);
+}
+
+h2{
+margin-bottom:20px;
+}
+
+.hash{
+background:#f3f3f3;
+padding:10px;
+border-radius:6px;
+margin-top:10px;
+word-break:break-all;
+}
+
+button{
+margin-top:20px;
+padding:10px 20px;
+background:#1d2671;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div style="flex:1; display:flex; justify-content:center; align-items:center;">
+<div class="box">
+
+<h2>{{result}}</h2>
+
+<p>Actual Evidence Hash:</p>
+
+<div class="hash">
+{{actual_hash}}
+</div>
+
+<div style="margin-top:20px;">
+<a href="/upload">
+<button style="margin-right:10px;">Upload Another</button>
+</a>
+<a href="/dashboard">
+<button style="background:#333;">Back to Dashboard</button>
+</a>
+</div>
+
+</div>
+</div>
+
+<footer style="text-align:center; padding:20px 15px; color:#fff; font-size:12px; border-top:1px solid rgba(255,255,255,0.3); background:rgba(0,0,0,0.3); letter-spacing:0.5px; width:100%;">
+    <p style="margin:4px 0;">&copy; 2026 Cyber Crime Investigation System. All rights reserved.</p>
+    <p style="margin:4px 0; color:#ffd700; font-size:13px;">Developed by Gungun I &amp; Ayushi I.</p>
+</footer>
+
+</body>
+</html>

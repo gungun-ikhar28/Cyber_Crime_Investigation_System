@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Investigator Login</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<div class="navbar">
+
+<div class="logo">
+Cyber Crime Portal
+</div>
+
+<div class="nav-links">
+<a href="/">Home</a>
+<a href="/login">Login</a>
+</div>
+
+</div>
+
+
+<div class="hero">
+
+<h1>Investigator Login</h1>
+
+<form action="/dashboard" method="POST">
+
+<input type="text" name="username" placeholder="Enter Username" required>
+
+<br><br>
+
+<input type="password" name="password" placeholder="Enter Password" required>
+
+<br><br>
+
+<button type="submit" class="btn">Secure Login</button>
+
+</form>
+
+</div>
+
+<footer class="site-footer">
+    <p>&copy; 2026 Cyber Crime Investigation System. All rights reserved.</p>
+    <p class="dev-credit">Developed by Gungun I &amp; Ayushi I.</p>
+</footer>
+
+</body>
+
+</html>

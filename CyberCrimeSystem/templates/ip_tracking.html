@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>IP Tracking</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<style>
+.tracking-container {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 30px;
+}
+
+.ip-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    justify-content: center;
+}
+
+.ip-form input[type="text"] {
+    width: 350px;
+    padding: 12px 20px;
+    background: transparent;
+    border: 2px solid #00ffff;
+    border-radius: 25px;
+    color: white;
+    font-size: 15px;
+    text-align: center;
+}
+
+.ip-form input::placeholder { color: #aaa; }
+
+.ip-form button {
+    padding: 12px 25px;
+    border: 2px solid #00ffff;
+    background: transparent;
+    color: #00ffff;
+    border-radius: 25px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.ip-form button:hover {
+    background: #00ffff;
+    color: black;
+    box-shadow: 0 0 15px #00ffff;
+}
+
+.ip-result {
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid #00ffff;
+    border-radius: 12px;
+    padding: 25px;
+    margin-top: 20px;
+}
+
+.ip-result table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.ip-result th, .ip-result td {
+    padding: 10px 15px;
+    text-align: left;
+    border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.ip-result th {
+    color: #00ffff;
+    width: 40%;
+    font-weight: normal;
+}
+
+.ip-result td {
+    color: white;
+}
+
+.error-msg {
+    color: #ff4b4b;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+.map-link {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    border: 1px solid #00ffff;
+    color: #00ffff;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+.map-link:hover {
+    background: #00ffff;
+    color: black;
+}
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+<div class="logo">Cyber Crime Investigation System</div>
+<div class="nav-links">
+    <a href="/dashboard">Dashboard</a>
+    <a href="/">Home</a>
+</div>
+</div>
+
+<div class="tracking-container">
+
+<h1 style="text-align:center; color:#00ffff; text-shadow:0 0 15px #00ffff; margin-bottom:30px;">
+    IP Address Tracking
+</h1>
+
+<form method="POST" class="ip-form">
+    <input type="text" name="ip_address" placeholder="Enter IP Address (e.g. 8.8.8.8)" 
+           value="{{ request.form.get('ip_address', '') }}" required>
+    <button type="submit">Track IP</button>
+</form>
+
+{% if error %}
+<p class="error-msg">{{ error }}</p>
+{% endif %}
+
+{% if ip_info %}
+<div class="ip-result">
+    <h3 style="color:#00ffff; margin-bottom:15px; text-align:center;">IP Geolocation Results</h3>
+    <table>
+        <tr><th>IP Address</th><td>{{ ip_info.query }}</td></tr>
+        <tr><th>Country</th><td>{{ ip_info.country }}</td></tr>
+        <tr><th>Region</th><td>{{ ip_info.regionName }}</td></tr>
+        <tr><th>City</th><td>{{ ip_info.city }}</td></tr>
+        <tr><th>ZIP Code</th><td>{{ ip_info.zip }}</td></tr>
+        <tr><th>Latitude</th><td>{{ ip_info.lat }}</td></tr>
+        <tr><th>Longitude</th><td>{{ ip_info.lon }}</td></tr>
+        <tr><th>Timezone</th><td>{{ ip_info.timezone }}</td></tr>
+        <tr><th>ISP</th><td>{{ ip_info.isp }}</td></tr>
+        <tr><th>Organization</th><td>{{ ip_info.org }}</td></tr>
+        <tr><th>AS Number</th><td>{{ ip_info['as'] }}</td></tr>
+    </table>
+
+    <div style="text-align:center; margin-top:20px;">
+        <a class="map-link" href="https://www.openstreetmap.org/?mlat={{ ip_info.lat }}&mlon={{ ip_info.lon }}#map=12/{{ ip_info.lat }}/{{ ip_info.lon }}" target="_blank">
+            View on Map
+        </a>
+    </div>
+</div>
+{% endif %}
+
+</div>
+
+<footer class="site-footer">
+    <p>&copy; 2026 Cyber Crime Investigation System. All rights reserved.</p>
+    <p class="dev-credit">Developed by Gungun I &amp; Ayushi I.</p>
+</footer>
+
+</body>
+</html>
