@@ -1,116 +1,186 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Upload Evidence</title>
-
-<style>
-
-body{
-font-family: Arial;
-background: linear-gradient(to right,#1d2671,#c33764);
-min-height:100vh;
-display:flex;
-flex-direction:column;
-}
-
-.container{
-background:white;
-padding:40px;
-border-radius:10px;
-width:400px;
-text-align:center;
-box-shadow:0 10px 25px rgba(0,0,0,0.2);
-}
-
-h2{
-margin-bottom:20px;
-}
-
-.file-input{
-border:2px dashed #aaa;
-padding:25px;
-margin-bottom:20px;
-border-radius:10px;
-cursor:pointer;
-}
-
-.file-input:hover{
-background:#f3f3f3;
-}
-
-input[type=file]{
-border:none;
-}
-
-input[type=text]{
-width:100%;
-padding:10px;
-margin-top:10px;
-margin-bottom:20px;
-border-radius:6px;
-border:1px solid #ccc;
-}
-
-button{
-background:#1d2671;
-color:white;
-padding:12px;
-width:100%;
-border:none;
-border-radius:6px;
-font-size:16px;
-cursor:pointer;
-}
-
-button:hover{
-background:#0f1450;
-}
-
-.back-link{
-display:inline-block;
-margin-top:15px;
-color:#1d2671;
-text-decoration:none;
-font-size:14px;
-}
-
-.back-link:hover{
-text-decoration:underline;
-}
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Digital Evidence - Cyber Crime System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .upload-card-wrapper {
+            max-width: 580px;
+            margin: 40px auto;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-cyan);
+            border-radius: 14px;
+            padding: 35px 30px;
+            box-shadow: 0 0 25px var(--glow-cyan);
+        }
+        .mode-selection {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+        .mode-btn {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid var(--border-cyan);
+            background: transparent;
+            color: var(--text-primary);
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 12px;
+            transition: 0.3s;
+            text-align: center;
+        }
+        .mode-btn.active {
+            background: var(--border-cyan);
+            color: #000;
+            font-weight: bold;
+            box-shadow: 0 0 10px var(--glow-cyan);
+        }
+    </style>
 </head>
-
 <body>
 
-<div style="flex:1; display:flex; justify-content:center; align-items:center;">
-<div class="container">
-
-<h2>Upload Digital Evidence</h2>
-
-<form action="/upload" method="post" enctype="multipart/form-data">
-
-<div class="file-input">
-<p>Select Evidence File</p>
-<input type="file" name="file" required>
+<div class="navbar">
+    <a href="/" class="logo">Cyber Crime Investigation System</a>
+    <div class="nav-links">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/evidence" target="_blank">Evidence Locker</a>
+        <a href="/upload" class="active">Upload Evidence</a>
+        <div class="font-selector-wrapper">
+            <select id="font-selector" class="font-selector-select" onchange="changeFont(this.value)" title="Choose UI Font">
+                <option value="Orbitron" style="font-family: 'Orbitron', sans-serif;">Orbitron (Futuristic)</option>
+                <option value="Rajdhani" style="font-family: 'Rajdhani', sans-serif;">Rajdhani (Tactical Tech)</option>
+                <option value="Share Tech Mono" style="font-family: 'Share Tech Mono', monospace;">Share Tech Mono (Hacker)</option>
+                <option value="Audiowide" style="font-family: 'Audiowide', cursive;">Audiowide (Cybernetic)</option>
+                <option value="Exo 2" style="font-family: 'Exo 2', sans-serif;">Exo 2 (Modern Clean)</option>
+                <option value="Electrolize" style="font-family: 'Electrolize', sans-serif;">Electrolize (Digital)</option>
+            </select>
+        </div>
+        <button id="theme-toggle-btn" class="theme-toggle-btn" onclick="toggleTheme()">☀️ Light Mode</button>
+        <a href="/logout" style="color: #ff6b6b;">Logout</a>
+    </div>
 </div>
 
-<label>Enter Evidence Hash (SHA256)</label>
-<input type="text" name="hash" placeholder="Enter Hash Value" required>
+<div class="main-wrapper">
+    <div class="upload-card-wrapper">
+        <h1 style="color: var(--text-accent); font-size: 24px; text-align: center; margin: 0 0 15px 0;">
+            📤 Upload Digital Evidence
+        </h1>
+        <p style="color: var(--text-muted); font-size: 13px; text-align: center; margin-bottom: 25px;">
+            Securely inject forensic artifacts into the immutable chain of custody ledger.
+        </p>
 
-<button type="submit">Upload & Verify</button>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert-box alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
-</form>
+        <!-- Upload Mode Switcher -->
+        <div class="mode-selection">
+            <button type="button" class="mode-btn active" id="btn-mode-auto" onclick="setMode('auto_hash')">
+                ⚡ Auto-Generate SHA-256 &amp; Store
+            </button>
+            <button type="button" class="mode-btn" id="btn-mode-verify" onclick="setMode('verify_hash')">
+                🔍 Verify Against Reference Hash
+            </button>
+        </div>
 
-<a href="/dashboard" class="back-link">&larr; Back to Dashboard</a>
+        <form action="/upload" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="upload_mode" id="upload-mode-input" value="auto_hash">
 
+            <!-- Case Association -->
+            <div class="auth-input-group">
+                <label>Associated Case / Complaint ID *</label>
+                <select name="case_id" required>
+                    {% if active_case_id %}
+                    <option value="{{ active_case_id }}" selected>Active Case: {{ active_case_id }}</option>
+                    {% endif %}
+                    {% for c in complaints %}
+                        {% if c.id != active_case_id %}
+                        <option value="{{ c.id }}">{{ c.id }} - {{ c.crime_type }} ({{ c.name }})</option>
+                        {% endif %}
+                    {% endfor %}
+                    <option value="GENERAL-EVIDENCE">General Evidence (Unassigned)</option>
+                </select>
+            </div>
+
+            <!-- Evidence File Selector -->
+            <label class="upload-area" id="file-dropzone">
+                <div style="font-size: 36px; margin-bottom: 8px;">📂</div>
+                <div id="file-label-text" style="color: var(--text-accent); font-weight: 600;">
+                    Click to Choose Evidence File
+                </div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 5px;">
+                    Supports documents, images, pcaps, logs, drive dumps
+                </div>
+                <input type="file" name="file" id="evidence-file" style="display: none;" required onchange="handleFileSelected(this)">
+            </label>
+
+            <!-- Manual Hash Verification Field (Toggled by Mode) -->
+            <div class="auth-input-group" id="hash-field-group" style="display: none;">
+                <label>Reference Hash (SHA-256)</label>
+                <input type="text" name="hash" id="hash-input" placeholder="Enter expected 64-character SHA-256 hash value">
+                <span style="font-size: 11px; color: var(--text-muted);">
+                    The system will compare the uploaded file's hash with this reference value.
+                </span>
+            </div>
+
+            <button type="submit" class="btn" style="width: 100%; margin-top: 15px;">
+                Securely Upload &amp; Record Evidence
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 25px;">
+            <a href="/dashboard" style="color: var(--text-muted); font-size: 13px; text-decoration: none;">
+                &larr; Back to Dashboard
+            </a>
+            &nbsp;|&nbsp;
+            <a href="/evidence" target="_blank" style="color: var(--text-accent); font-size: 13px; text-decoration: none;">
+                View Evidence Locker &rarr;
+            </a>
+        </div>
+    </div>
 </div>
-</div>
 
-<footer style="text-align:center; padding:20px 15px; color:#fff; font-size:12px; border-top:1px solid rgba(255,255,255,0.3); background:rgba(0,0,0,0.3); letter-spacing:0.5px; width:100%;">
-    <p style="margin:4px 0;">&copy; 2026 Cyber Crime Investigation System. All rights reserved.</p>
-    <p style="margin:4px 0; color:#ffd700; font-size:13px;">Developed by Gungun I &amp; Ayushi I.</p>
+<footer class="site-footer">
+    <p>&copy; 2026 Cyber Crime Investigation System. All rights reserved.</p>
+    <p class="dev-credit">Developed by Gungun I &amp; Ayushi I.</p>
 </footer>
 
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+<script>
+    function setMode(mode) {
+        document.getElementById('upload-mode-input').value = mode;
+        const btnAuto = document.getElementById('btn-mode-auto');
+        const btnVerify = document.getElementById('btn-mode-verify');
+        const hashGroup = document.getElementById('hash-field-group');
+        const hashInput = document.getElementById('hash-input');
+
+        if (mode === 'verify_hash') {
+            btnAuto.classList.remove('active');
+            btnVerify.classList.add('active');
+            hashGroup.style.display = 'block';
+            hashInput.required = true;
+        } else {
+            btnVerify.classList.remove('active');
+            btnAuto.classList.add('active');
+            hashGroup.style.display = 'none';
+            hashInput.required = false;
+        }
+    }
+
+    function handleFileSelected(input) {
+        if (input.files && input.files[0]) {
+            const f = input.files[0];
+            document.getElementById('file-label-text').innerHTML = '✅ Selected: ' + f.name + ' (' + (f.size / 1024).toFixed(1) + ' KB)';
+        }
+    }
+</script>
 </body>
 </html>

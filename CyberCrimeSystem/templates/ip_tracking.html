@@ -1,158 +1,112 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-<title>IP Tracking</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-<style>
-.tracking-container {
-    max-width: 700px;
-    margin: 40px auto;
-    padding: 30px;
-}
-
-.ip-form {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 30px;
-    justify-content: center;
-}
-
-.ip-form input[type="text"] {
-    width: 350px;
-    padding: 12px 20px;
-    background: transparent;
-    border: 2px solid #00ffff;
-    border-radius: 25px;
-    color: white;
-    font-size: 15px;
-    text-align: center;
-}
-
-.ip-form input::placeholder { color: #aaa; }
-
-.ip-form button {
-    padding: 12px 25px;
-    border: 2px solid #00ffff;
-    background: transparent;
-    color: #00ffff;
-    border-radius: 25px;
-    font-size: 15px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.ip-form button:hover {
-    background: #00ffff;
-    color: black;
-    box-shadow: 0 0 15px #00ffff;
-}
-
-.ip-result {
-    background: rgba(0, 0, 0, 0.6);
-    border: 1px solid #00ffff;
-    border-radius: 12px;
-    padding: 25px;
-    margin-top: 20px;
-}
-
-.ip-result table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.ip-result th, .ip-result td {
-    padding: 10px 15px;
-    text-align: left;
-    border-bottom: 1px solid rgba(0, 255, 255, 0.2);
-}
-
-.ip-result th {
-    color: #00ffff;
-    width: 40%;
-    font-weight: normal;
-}
-
-.ip-result td {
-    color: white;
-}
-
-.error-msg {
-    color: #ff4b4b;
-    text-align: center;
-    margin-top: 20px;
-    font-size: 16px;
-}
-
-.map-link {
-    display: inline-block;
-    margin-top: 15px;
-    padding: 10px 20px;
-    border: 1px solid #00ffff;
-    color: #00ffff;
-    text-decoration: none;
-    border-radius: 6px;
-    transition: 0.3s;
-}
-
-.map-link:hover {
-    background: #00ffff;
-    color: black;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Address Geolocation &amp; Tracking - Cyber Crime System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .tracking-container {
+            max-width: 720px;
+            margin: 35px auto;
+            padding: 30px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-cyan);
+            border-radius: 14px;
+            box-shadow: 0 0 25px var(--glow-cyan);
+        }
+        .ip-form {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .ip-form input[type="text"] {
+            flex: 1;
+            min-width: 260px;
+        }
+        .ip-form button {
+            width: auto;
+            padding: 12px 28px;
+        }
+    </style>
 </head>
-
 <body>
 
 <div class="navbar">
-<div class="logo">Cyber Crime Investigation System</div>
-<div class="nav-links">
-    <a href="/dashboard">Dashboard</a>
-    <a href="/">Home</a>
-</div>
-</div>
-
-<div class="tracking-container">
-
-<h1 style="text-align:center; color:#00ffff; text-shadow:0 0 15px #00ffff; margin-bottom:30px;">
-    IP Address Tracking
-</h1>
-
-<form method="POST" class="ip-form">
-    <input type="text" name="ip_address" placeholder="Enter IP Address (e.g. 8.8.8.8)" 
-           value="{{ request.form.get('ip_address', '') }}" required>
-    <button type="submit">Track IP</button>
-</form>
-
-{% if error %}
-<p class="error-msg">{{ error }}</p>
-{% endif %}
-
-{% if ip_info %}
-<div class="ip-result">
-    <h3 style="color:#00ffff; margin-bottom:15px; text-align:center;">IP Geolocation Results</h3>
-    <table>
-        <tr><th>IP Address</th><td>{{ ip_info.query }}</td></tr>
-        <tr><th>Country</th><td>{{ ip_info.country }}</td></tr>
-        <tr><th>Region</th><td>{{ ip_info.regionName }}</td></tr>
-        <tr><th>City</th><td>{{ ip_info.city }}</td></tr>
-        <tr><th>ZIP Code</th><td>{{ ip_info.zip }}</td></tr>
-        <tr><th>Latitude</th><td>{{ ip_info.lat }}</td></tr>
-        <tr><th>Longitude</th><td>{{ ip_info.lon }}</td></tr>
-        <tr><th>Timezone</th><td>{{ ip_info.timezone }}</td></tr>
-        <tr><th>ISP</th><td>{{ ip_info.isp }}</td></tr>
-        <tr><th>Organization</th><td>{{ ip_info.org }}</td></tr>
-        <tr><th>AS Number</th><td>{{ ip_info['as'] }}</td></tr>
-    </table>
-
-    <div style="text-align:center; margin-top:20px;">
-        <a class="map-link" href="https://www.openstreetmap.org/?mlat={{ ip_info.lat }}&mlon={{ ip_info.lon }}#map=12/{{ ip_info.lat }}/{{ ip_info.lon }}" target="_blank">
-            View on Map
-        </a>
+    <a href="/" class="logo">Cyber Crime Investigation System</a>
+    <div class="nav-links">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/evidence" target="_blank">Evidence Locker</a>
+        <a href="/ip_tracking" class="active">IP Tracking</a>
+        <div class="font-selector-wrapper">
+            <select id="font-selector" class="font-selector-select" onchange="changeFont(this.value)" title="Choose UI Font">
+                <option value="Orbitron" style="font-family: 'Orbitron', sans-serif;">Orbitron (Futuristic)</option>
+                <option value="Rajdhani" style="font-family: 'Rajdhani', sans-serif;">Rajdhani (Tactical Tech)</option>
+                <option value="Share Tech Mono" style="font-family: 'Share Tech Mono', monospace;">Share Tech Mono (Hacker)</option>
+                <option value="Audiowide" style="font-family: 'Audiowide', cursive;">Audiowide (Cybernetic)</option>
+                <option value="Exo 2" style="font-family: 'Exo 2', sans-serif;">Exo 2 (Modern Clean)</option>
+                <option value="Electrolize" style="font-family: 'Electrolize', sans-serif;">Electrolize (Digital)</option>
+            </select>
+        </div>
+        <button id="theme-toggle-btn" class="theme-toggle-btn" onclick="toggleTheme()">☀️ Light Mode</button>
+        <a href="/logout" style="color: #ff6b6b;">Logout</a>
     </div>
 </div>
-{% endif %}
 
+<div class="main-wrapper">
+    <div class="tracking-container">
+
+        <h1 style="text-align: center; color: var(--text-accent); text-shadow: 0 0 15px var(--glow-cyan); margin-top: 0; margin-bottom: 10px; font-size: 24px;">
+            🌐 IP Address Geolocation Tracking
+        </h1>
+        <p style="text-align: center; color: var(--text-muted); font-size: 13px; margin-bottom: 25px;">
+            Resolve origin, ISP infrastructure, autonomous systems, and physical coordinates of suspicious nodes.
+        </p>
+
+        <form method="POST" class="ip-form">
+            <input type="text" name="ip_address" placeholder="Enter IP Address (e.g. 185.220.101.5 or 8.8.8.8)" 
+                   value="{{ request.form.get('ip_address', '') }}" required>
+            <button type="submit" class="btn" style="margin: 0;">Track IP</button>
+        </form>
+
+        {% if error %}
+        <div class="alert-box alert-error">{{ error }}</div>
+        {% endif %}
+
+        {% if ip_info %}
+        <div style="background: var(--bg-card); border: 1px solid var(--border-cyan); border-radius: 10px; padding: 22px; margin-top: 20px;">
+            <h3 style="color: var(--text-accent); margin: 0 0 15px 0; text-align: center; font-size: 18px;">
+                Forensic Geolocation Dossier: {{ ip_info.query }}
+            </h3>
+            
+            <table class="cyber-table" style="margin-top: 0;">
+                <tr><th style="width: 35%;">IP Address</th><td style="font-family: monospace; color: var(--text-accent);">{{ ip_info.query }}</td></tr>
+                <tr><th>Country</th><td>{{ ip_info.country }}</td></tr>
+                <tr><th>Region / State</th><td>{{ ip_info.regionName }}</td></tr>
+                <tr><th>City</th><td>{{ ip_info.city }}</td></tr>
+                <tr><th>Postal / ZIP Code</th><td>{{ ip_info.zip or 'N/A' }}</td></tr>
+                <tr><th>Coordinates</th><td>{{ ip_info.lat }}, {{ ip_info.lon }}</td></tr>
+                <tr><th>Timezone</th><td>{{ ip_info.timezone }}</td></tr>
+                <tr><th>Internet Service Provider</th><td>{{ ip_info.isp }}</td></tr>
+                <tr><th>Organization</th><td>{{ ip_info.org }}</td></tr>
+                <tr><th>Autonomous System (AS)</th><td>{{ ip_info['as'] }}</td></tr>
+            </table>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="https://www.openstreetmap.org/?mlat={{ ip_info.lat }}&mlon={{ ip_info.lon }}#map=12/{{ ip_info.lat }}/{{ ip_info.lon }}" target="_blank" class="btn btn-sm">
+                    🗺️ View Geographic Map on OpenStreetMap
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        <div style="text-align: center; margin-top: 25px;">
+            <a href="/dashboard" style="color: var(--text-accent); font-size: 13px; text-decoration: none;">&larr; Back to Dashboard</a>
+        </div>
+
+    </div>
 </div>
 
 <footer class="site-footer">
@@ -160,5 +114,6 @@
     <p class="dev-credit">Developed by Gungun I &amp; Ayushi I.</p>
 </footer>
 
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
 </body>
 </html>

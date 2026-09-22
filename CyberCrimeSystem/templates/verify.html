@@ -1,107 +1,177 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
-<title>Evidence Hash Verification</title>
-
-<style>
-
-body{
-background:#020024;
-background:linear-gradient(135deg,#020024,#090979,#00d4ff);
-font-family:Arial;
-color:white;
-min-height:100vh;
-display:flex;
-flex-direction:column;
-}
-
-.box{
-background:rgba(0,0,0,0.85);
-padding:40px;
-border-radius:15px;
-text-align:center;
-width:420px;
-box-shadow:0 0 25px #00ffff;
-}
-
-h2{
-color:#00ffff;
-margin-bottom:25px;
-}
-
-.upload-area{
-
-border:2px dashed #00ffff;
-padding:40px;
-border-radius:10px;
-cursor:pointer;
-transition:0.3s;
-
-}
-
-.upload-area:hover{
-background:rgba(0,255,255,0.1);
-}
-
-input[type="file"]{
-display:none;
-}
-
-button{
-
-margin-top:20px;
-padding:12px 25px;
-background:#00ffff;
-border:none;
-border-radius:8px;
-font-weight:bold;
-cursor:pointer;
-
-}
-
-button:hover{
-background:#00cccc;
-}
-
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evidence Hash Verification - Cyber Crime System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .verify-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .verify-tab {
+            flex: 1;
+            padding: 9px 12px;
+            border: 1px solid var(--border-cyan);
+            background: transparent;
+            color: var(--text-primary);
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .verify-tab.active {
+            background: var(--border-cyan);
+            color: #000;
+            font-weight: bold;
+            box-shadow: 0 0 10px var(--glow-cyan);
+        }
+    </style>
 </head>
-
 <body>
 
-<div style="flex:1; display:flex; justify-content:center; align-items:center;">
-<div class="box">
-
-<h2>Evidence Hash Verification</h2>
-
-<form action="/verify" method="POST" enctype="multipart/form-data">
-
-<label class="upload-area">
-
-📂 Click to Select Evidence File
-
-<input type="file" name="file" required>
-
-</label>
-
-<br>
-
-<button type="submit">Verify Evidence</button>
-
-</form>
-
-<a href="/dashboard" style="display:inline-block; margin-top:20px; color:#00ffff; text-decoration:none; font-size:14px;">&larr; Back to Dashboard</a>
-
-</div>
+<div class="navbar">
+    <a href="/" class="logo">Cyber Crime Investigation System</a>
+    <div class="nav-links">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/evidence" target="_blank">Evidence Locker</a>
+        <a href="/verify" class="active">Hash Verification</a>
+        <div class="font-selector-wrapper">
+            <select id="font-selector" class="font-selector-select" onchange="changeFont(this.value)" title="Choose UI Font">
+                <option value="Orbitron" style="font-family: 'Orbitron', sans-serif;">Orbitron (Futuristic)</option>
+                <option value="Rajdhani" style="font-family: 'Rajdhani', sans-serif;">Rajdhani (Tactical Tech)</option>
+                <option value="Share Tech Mono" style="font-family: 'Share Tech Mono', monospace;">Share Tech Mono (Hacker)</option>
+                <option value="Audiowide" style="font-family: 'Audiowide', cursive;">Audiowide (Cybernetic)</option>
+                <option value="Exo 2" style="font-family: 'Exo 2', sans-serif;">Exo 2 (Modern Clean)</option>
+                <option value="Electrolize" style="font-family: 'Electrolize', sans-serif;">Electrolize (Digital)</option>
+            </select>
+        </div>
+        <button id="theme-toggle-btn" class="theme-toggle-btn" onclick="toggleTheme()">☀️ Light Mode</button>
+        <a href="/logout" style="color: #ff6b6b;">Logout</a>
+    </div>
 </div>
 
-<footer style="text-align:center; padding:20px 15px; color:#888; font-size:12px; border-top:1px solid rgba(0,255,255,0.2); background:rgba(0,0,0,0.5); letter-spacing:0.5px; width:100%;">
-    <p style="margin:4px 0;">&copy; 2026 Cyber Crime Investigation System. All rights reserved.</p>
-    <p style="margin:4px 0; color:#00ffff; font-size:13px;">Developed by Gungun I &amp; Ayushi I.</p>
+<div class="main-wrapper">
+    <!-- Centered Card Container with ample margins (Fixes Image 4 overlap!) -->
+    <div class="verification-card-box">
+        
+        <h2>Evidence Hash Verification</h2>
+        <p style="color: var(--text-muted); font-size: 13px; margin: 0 0 20px 0;">
+            Verify file authenticity, detect tampering, and validate cryptographic integrity.
+        </p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert-box alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Verification Mode Tabs -->
+        <div class="verify-tabs">
+            <button type="button" class="verify-tab active" id="tab-gen" onclick="setVerifyMode('file_only')">
+                Generate Hash
+            </button>
+            <button type="button" class="verify-tab" id="tab-compare" onclick="setVerifyMode('compare_hash')">
+                Compare with Hash
+            </button>
+            <button type="button" class="verify-tab" id="tab-stored" onclick="setVerifyMode('compare_stored')">
+                Check Stored Evidence
+            </button>
+        </div>
+
+        <form action="/verify" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="verify_mode" id="verify-mode-input" value="file_only">
+
+            <!-- File Dropzone Box with proper block margins -->
+            <label class="upload-area">
+                <div style="font-size: 38px; margin-bottom: 8px;">📂</div>
+                <div id="verify-file-label" style="color: var(--text-accent); font-weight: 600; font-size: 15px;">
+                    Click to Select Evidence File
+                </div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px;">
+                    Supports any digital file format
+                </div>
+                <input type="file" name="file" required onchange="handleVerifyFile(this)">
+            </label>
+
+            <!-- Mode 2: Compare against reference hash -->
+            <div id="compare-hash-field" style="display: none; margin-bottom: 20px; text-align: left;">
+                <label style="display: block; font-size: 12px; color: var(--text-accent); margin-bottom: 6px; text-transform: uppercase;">
+                    Expected SHA-256 Hash
+                </label>
+                <input type="text" name="expected_hash" placeholder="Paste 64-char reference SHA-256 hash here">
+            </div>
+
+            <!-- Mode 3: Compare against stored evidence in database -->
+            <div id="compare-stored-field" style="display: none; margin-bottom: 20px; text-align: left;">
+                <label style="display: block; font-size: 12px; color: var(--text-accent); margin-bottom: 6px; text-transform: uppercase;">
+                    Select Stored Evidence Record
+                </label>
+                <select name="stored_evidence_id">
+                    {% if stored_evidence %}
+                        {% for ev in stored_evidence %}
+                        <option value="{{ ev.id }}">{{ ev.case_id }} - {{ ev.original_name }} ({{ ev.sha256_hash[:12] }}...)</option>
+                        {% endfor %}
+                    {% else %}
+                        <option value="">No stored evidence in database yet</option>
+                    {% endif %}
+                </select>
+            </div>
+
+            <button type="submit" class="btn" style="width: 100%;">
+                Execute Integrity Verification
+            </button>
+        </form>
+
+        <div style="margin-top: 25px;">
+            <a href="/dashboard" style="color: var(--text-accent); text-decoration: none; font-size: 13px;">
+                &larr; Back to Dashboard
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<footer class="site-footer">
+    <p>&copy; 2026 Cyber Crime Investigation System. All rights reserved.</p>
+    <p class="dev-credit">Developed by Gungun I &amp; Ayushi I.</p>
 </footer>
 
-</body>
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+<script>
+    function setVerifyMode(mode) {
+        document.getElementById('verify-mode-input').value = mode;
+        const tabs = document.querySelectorAll('.verify-tab');
+        tabs.forEach(t => t.classList.remove('active'));
 
+        const compareField = document.getElementById('compare-hash-field');
+        const storedField = document.getElementById('compare-stored-field');
+
+        compareField.style.display = 'none';
+        storedField.style.display = 'none';
+
+        if (mode === 'compare_hash') {
+            document.getElementById('tab-compare').classList.add('active');
+            compareField.style.display = 'block';
+        } else if (mode === 'compare_stored') {
+            document.getElementById('tab-stored').classList.add('active');
+            storedField.style.display = 'block';
+        } else {
+            document.getElementById('tab-gen').classList.add('active');
+        }
+    }
+
+    function handleVerifyFile(input) {
+        if (input.files && input.files[0]) {
+            const f = input.files[0];
+            document.getElementById('verify-file-label').innerHTML = '✅ Selected: ' + f.name + ' (' + (f.size / 1024).toFixed(1) + ' KB)';
+        }
+    }
+</script>
+</body>
 </html>

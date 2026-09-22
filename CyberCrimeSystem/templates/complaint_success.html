@@ -1,183 +1,57 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-<title>Complaint Filed Successfully</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
-<style>
-.success-container {
-    max-width: 600px;
-    margin: 60px auto;
-    padding: 20px;
-}
-
-.success-box {
-    background: rgba(0, 0, 0, 0.7);
-    border: 1px solid #00ff88;
-    border-radius: 12px;
-    padding: 40px;
-    text-align: center;
-    box-shadow: 0 0 30px rgba(0, 255, 136, 0.15);
-}
-
-.success-icon {
-    font-size: 60px;
-    margin-bottom: 15px;
-}
-
-.success-box h1 {
-    color: #00ff88;
-    font-size: 22px;
-    margin-bottom: 10px;
-}
-
-.success-box p {
-    color: #aaa;
-    font-size: 14px;
-    margin-bottom: 25px;
-}
-
-.complaint-id {
-    display: inline-block;
-    background: rgba(0, 255, 136, 0.1);
-    border: 2px solid #00ff88;
-    border-radius: 10px;
-    padding: 15px 30px;
-    margin: 15px 0;
-}
-
-.complaint-id .label {
-    color: #00ff88;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-}
-
-.complaint-id .value {
-    color: white;
-    font-size: 24px;
-    font-weight: bold;
-    margin-top: 5px;
-    font-family: 'Courier New', monospace;
-}
-
-.details-grid {
-    text-align: left;
-    margin: 25px 0;
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 8px;
-    padding: 20px;
-}
-
-.detail-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    font-size: 13px;
-}
-
-.detail-row:last-child {
-    border-bottom: none;
-}
-
-.detail-row .label {
-    color: #00ffff;
-}
-
-.detail-row .value {
-    color: #ddd;
-    text-align: right;
-    max-width: 60%;
-}
-
-.action-links {
-    margin-top: 25px;
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.action-links a {
-    padding: 12px 25px;
-    border: 2px solid #00ffff;
-    background: transparent;
-    color: #00ffff;
-    border-radius: 25px;
-    text-decoration: none;
-    font-size: 13px;
-    transition: 0.3s;
-}
-
-.action-links a:hover {
-    background: #00ffff;
-    color: black;
-    box-shadow: 0 0 15px #00ffff;
-}
-
-.action-links a.primary {
-    border-color: #00ff88;
-    color: #00ff88;
-}
-
-.action-links a.primary:hover {
-    background: #00ff88;
-    color: black;
-    box-shadow: 0 0 15px #00ff88;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaint Filed Successfully - Cyber Crime Portal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-
 <body>
 
 <div class="navbar">
-<div class="logo">Cyber Crime Portal</div>
-<div class="nav-links">
-    <a href="/">Home</a>
-    <a href="/login">Login</a>
-</div>
-</div>
-
-<div class="success-container">
-<div class="success-box">
-
-    <div class="success-icon">&#10003;</div>
-
-    <h1>Complaint Filed Successfully!</h1>
-    <p>Your cyber crime complaint has been registered. Save your complaint ID for tracking.</p>
-
-    <div class="complaint-id">
-        <div class="label">Complaint ID</div>
-        <div class="value">{{ complaint.id }}</div>
+    <a href="/" class="logo">Cyber Crime Portal</a>
+    <div class="nav-links">
+        <a href="/">Home</a>
+        {% if current_user and current_user.role == 'user' %}
+        <a href="/user/dashboard">My Dashboard</a>
+        {% endif %}
+        <button id="theme-toggle-btn" class="theme-toggle-btn" onclick="toggleTheme()">☀️ Light Mode</button>
     </div>
-
-    <div class="details-grid">
-        <div class="detail-row">
-            <span class="label">Name</span>
-            <span class="value">{{ complaint.name }}</span>
-        </div>
-        <div class="detail-row">
-            <span class="label">Crime Type</span>
-            <span class="value">{{ complaint.crime_type }}</span>
-        </div>
-        <div class="detail-row">
-            <span class="label">Status</span>
-            <span class="value" style="color:#ffaa00;">{{ complaint.status }}</span>
-        </div>
-        <div class="detail-row">
-            <span class="label">Filed At</span>
-            <span class="value">{{ complaint.filed_at }}</span>
-        </div>
-    </div>
-
-    <div class="action-links">
-        <a href="/complaint" class="primary">File Another Complaint</a>
-        <a href="/">Back to Home</a>
-    </div>
-
 </div>
+
+<div class="main-wrapper">
+    <div class="auth-container" style="max-width: 620px;">
+        <div style="font-size: 55px; margin-bottom: 10px;">✅</div>
+        <h1 style="color: #00ff88; text-shadow: 0 0 15px rgba(0,255,136,0.3); font-size: 24px; margin-bottom: 8px;">
+            Complaint Registered Successfully
+        </h1>
+        <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 25px;">
+            Your cyber crime grievance has been recorded in the central investigative database.
+        </p>
+
+        <div style="background: rgba(0, 255, 136, 0.08); border: 2px solid #00ff88; border-radius: 10px; padding: 20px; margin-bottom: 25px;">
+            <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #00ff88;">Unique Case Tracking ID</span>
+            <div style="font-size: 26px; font-family: monospace; font-weight: bold; color: var(--text-primary); margin-top: 6px;">
+                {{ complaint.id }}
+            </div>
+        </div>
+
+        <div style="text-align: left; background: var(--bg-card); border: 1px solid var(--border-cyan); border-radius: 8px; padding: 18px; margin-bottom: 25px; font-size: 13px;">
+            <p style="margin: 4px 0;"><strong>Complainant:</strong> {{ complaint.name }}</p>
+            <p style="margin: 4px 0;"><strong>Email:</strong> {{ complaint.email }}</p>
+            <p style="margin: 4px 0;"><strong>Crime Category:</strong> {{ complaint.crime_type }}</p>
+            <p style="margin: 4px 0;"><strong>Filed At:</strong> {{ complaint.filed_at }}</p>
+            <p style="margin: 4px 0;"><strong>Current Status:</strong> <span class="badge badge-pending">{{ complaint.status }}</span></p>
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+            {% if current_user and current_user.role == 'user' %}
+            <a href="/user/dashboard" class="btn btn-sm">Go to My Dashboard</a>
+            {% endif %}
+            <a href="/complaint" class="btn btn-secondary btn-sm">File Another Complaint</a>
+            <a href="/" class="btn btn-secondary btn-sm">Home</a>
+        </div>
+    </div>
 </div>
 
 <footer class="site-footer">
@@ -185,5 +59,6 @@
     <p class="dev-credit">Developed by Gungun I &amp; Ayushi I.</p>
 </footer>
 
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
 </body>
 </html>

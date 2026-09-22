@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citizen Dashboard - Cyber Crime Portal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .citizen-dashboard {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 20px;
+            width: 100%;
+        }
+        .user-welcome-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-cyan);
+            border-radius: 12px;
+            padding: 25px 30px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            box-shadow: 0 0 20px var(--glow-cyan);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-cyan);
+            border-radius: 10px;
+            padding: 18px 20px;
+            text-align: center;
+        }
+        .stat-card .count {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--text-accent);
+        }
+        .stat-card .title {
+            color: var(--text-muted);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <a href="/" class="logo">Cyber Crime Portal</a>
+    <div class="nav-links">
+        <a href="/" class="nav-item">Home</a>
+        <a href="/user/dashboard" class="active">My Dashboard</a>
+        <a href="/complaint" target="_blank">File Complaint</a>
+        <span class="user-badge">👤 {{ current_user.full_name }}</span>
+        <div class="font-selector-wrapper">
+            <select id="font-selector" class="font-selector-select" onchange="changeFont(this.value)" title="Choose UI Font">
+                <option value="Orbitron" style="font-family: 'Orbitron', sans-serif;">Orbitron (Futuristic)</option>
+                <option value="Rajdhani" style="font-family: 'Rajdhani', sans-serif;">Rajdhani (Tactical Tech)</option>
+                <option value="Share Tech Mono" style="font-family: 'Share Tech Mono', monospace;">Share Tech Mono (Hacker)</option>
+                <option value="Audiowide" style="font-family: 'Audiowide', cursive;">Audiowide (Cybernetic)</option>
+                <option value="Exo 2" style="font-family: 'Exo 2', sans-serif;">Exo 2 (Modern Clean)</option>
+                <option value="Electrolize" style="font-family: 'Electrolize', sans-serif;">Electrolize (Digital)</option>
+            </select>
+        </div>
+        <button id="theme-toggle-btn" class="theme-toggle-btn" onclick="toggleTheme()">☀️ Light Mode</button>
+        <a href="/logout" style="color: #ff6b6b;">Logout</a>
+    </div>
+</div>
+
+<div class="main-wrapper">
+    <div class="citizen-dashboard">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert-box alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="user-welcome-card">
+            <div>
+                <h1 style="margin: 0 0 8px 0; font-size: 24px; color: var(--text-accent);">Citizen Portal</h1>
+                <p style="margin: 0; color: var(--text-muted); font-size: 14px;">
+                    Welcome, <strong>{{ current_user.full_name }}</strong> ({{ current_user.email }})
+                </p>
+            </div>
+            <a href="/complaint" target="_blank" class="btn">➕ File New Complaint</a>
+        </div>
+
+        <!-- Quick Status Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="count">{{ complaints|length }}</div>
+                <div class="title">Total Filed</div>
+            </div>
+            <div class="stat-card">
+                <div class="count" style="color: var(--badge-pending);">
+                    {{ complaints|selectattr('status', 'equalto', 'Pending')|list|length }}
+                </div>
+                <div class="title">Yet to Solve / Pending</div>
+            </div>
+            <div class="stat-card">
+                <div class="count" style="color: var(--badge-investigating);">
+                    {{ complaints|selectattr('status', 'equalto', 'Under Investigation')|list|length }}
+                </div>
+                <div class="title">Under Investigation</div>
+            </div>
+            <div class="stat-card">
+                <div class="count" style="color: var(--badge-resolved);">
+                    {{ complaints|selectattr('status', 'equalto', 'Resolved')|list|length }}
+                </div>
+                <div class="title">Resolved</div>
+            </div>
+        </div>
+
+        <h2 style="color: var(--text-accent); font-size: 20px; margin-bottom: 15px;">My Cyber Crime Complaints</h2>
+
+        {% if complaints %}
+        <table class="cyber-table">
+            <thead>
+                <tr>
+                    <th>Case ID</th>
+                    <th>Crime Category</th>
+                    <th>Description</th>
+                    <th>Date Filed</th>
+                    <th>Investigation Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in complaints %}
+                <tr>
+                    <td style="font-family: monospace; font-weight: bold; color: var(--text-accent);">{{ c.id }}</td>
+                    <td>{{ c.crime_type }}</td>
+                    <td style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ c.description }}">
+                        {{ c.description }}
+                    </td>
+                    <td>{{ c.filed_at }}</td>
+                    <td>
+                        {% if c.status == 'Pending' %}
+                            <span class="badge badge-pending">Yet to Solve (Pending)</span>
+                        {% elif c.status == 'Under Investigation' or c.status == 'Evidence Collected' or c.status == 'Forensic Analysis' %}
+                            <span class="badge badge-investigating">{{ c.status }}</span>
+                        {% else %}
+                            <span class="badge badge-resolved">{{ c.status }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div style="text-align: center; padding: 50px 20px; background: var(--bg-card); border: 1px dashed var(--border-cyan); border-radius: 10px;">
+            <p style="font-size: 16px; color: var(--text-muted); margin-bottom: 20px;">You haven't filed any cyber crime complaints yet.</p>
+            <a href="/complaint" class="btn">File Your First Complaint</a>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+<footer class="site-footer">
+    <p>&copy; 2026 Cyber Crime Investigation System. All rights reserved.</p>
+    <p class="dev-credit">Developed by Gungun I &amp; Ayushi I.</p>
+</footer>
+
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+</body>
+</html>

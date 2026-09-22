@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Registration - Cyber Crime System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="navbar">
+    <a href="/" class="logo">Cyber Crime Portal</a>
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/login">Login</a>
+        <div class="font-selector-wrapper">
+            <select id="font-selector" class="font-selector-select" onchange="changeFont(this.value)" title="Choose UI Font">
+                <option value="Orbitron" style="font-family: 'Orbitron', sans-serif;">Orbitron (Futuristic)</option>
+                <option value="Rajdhani" style="font-family: 'Rajdhani', sans-serif;">Rajdhani (Tactical Tech)</option>
+                <option value="Share Tech Mono" style="font-family: 'Share Tech Mono', monospace;">Share Tech Mono (Hacker)</option>
+                <option value="Audiowide" style="font-family: 'Audiowide', cursive;">Audiowide (Cybernetic)</option>
+                <option value="Exo 2" style="font-family: 'Exo 2', sans-serif;">Exo 2 (Modern Clean)</option>
+                <option value="Electrolize" style="font-family: 'Electrolize', sans-serif;">Electrolize (Digital)</option>
+            </select>
+        </div>
+        <button id="theme-toggle-btn" class="theme-toggle-btn" onclick="toggleTheme()">☀️ Light Mode</button>
+    </div>
+</div>
+
+<div class="main-wrapper">
+    <div class="auth-container" style="max-width: 540px;">
+        <h1 id="reg-heading">{% if role == 'investigator' %}Investigator Registration{% else %}Citizen Registration{% endif %}</h1>
+
+        <div class="auth-tabs">
+            <button type="button" class="auth-tab {% if role != 'investigator' %}active{% endif %}" onclick="selectRole('user')">
+                🛡️ Citizen / Complainant
+            </button>
+            <button type="button" class="auth-tab {% if role == 'investigator' %}active{% endif %}" onclick="selectRole('investigator')">
+                🔍 Cyber Investigator
+            </button>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert-box alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form action="/register" method="POST" id="register-form">
+            <input type="hidden" name="role" id="role-input" value="{{ role or 'user' }}">
+
+            <div class="auth-input-group">
+                <label>Full Name *</label>
+                <input type="text" name="full_name" value="{{ full_name or '' }}" placeholder="Enter your full name" required>
+            </div>
+
+            <div class="auth-input-group">
+                <label>Username *</label>
+                <input type="text" name="username" value="{{ username or '' }}" placeholder="Choose a unique username" required>
+            </div>
+
+            <div class="auth-input-group">
+                <label>Email Address *</label>
+                <input type="email" name="email" value="{{ email or '' }}" placeholder="name@domain.com" required>
+            </div>
+
+            <!-- Investigator Specific Fields -->
+            <div id="investigator-fields" style="display: {% if role == 'investigator' %}block{% else %}none{% endif %};">
+                <div class="auth-input-group">
+                    <label>Badge / Service ID Number *</label>
+                    <input type="text" name="badge_number" placeholder="e.g. CC-INV-7821">
+                </div>
+                <div class="auth-input-group">
+                    <label>Department / Cyber Cell *</label>
+                    <input type="text" name="department" placeholder="e.g. State Cyber Forensics Division">
+                </div>
+            </div>
+
+            <div class="auth-input-group">
+                <label>Password *</label>
+                <input type="password" name="password" id="password-input" placeholder="Create a strong password" required oninput="checkPasswordStrength(this.value)">
+                <div class="pw-strength-meter">
+                    <div class="pw-strength-bar" id="strength-bar"></div>
+                </div>
+                <div class="pw-rules">
+                    <span class="pw-rule-item invalid" id="rule-len">✖ 8+ chars</span>
+                    <span class="pw-rule-item invalid" id="rule-upper">✖ Uppercase</span>
+                    <span class="pw-rule-item invalid" id="rule-lower">✖ Lowercase</span>
+                    <span class="pw-rule-item invalid" id="rule-num">✖ Number</span>
+                    <span class="pw-rule-item invalid" id="rule-sym">✖ Symbol</span>
+                </div>
+            </div>
+
+            <div class="auth-input-group">
+                <label>Confirm Password *</label>
+                <input type="password" name="confirm_password" id="confirm-password-input" placeholder="Re-enter your password" required>
+            </div>
+
+            <button type="submit" class="btn" style="width: 100%; margin-top: 15px;">Create Secure Account</button>
+        </form>
+
+        <p style="margin-top: 25px; font-size: 13px; color: var(--text-muted);">
+            Already registered? 
+            <a href="/login" id="login-switch-link" style="color: var(--text-accent); text-decoration: underline;">Log in here</a>
+        </p>
+    </div>
+</div>
+
+<footer class="site-footer">
+    <p>&copy; 2026 Cyber Crime Investigation System. All rights reserved.</p>
+    <p class="dev-credit">Developed by Gungun I &amp; Ayushi I.</p>
+</footer>
+
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+<script>
+    function selectRole(role) {
+        document.getElementById('role-input').value = role;
+        const tabs = document.querySelectorAll('.auth-tab');
+        const invFields = document.getElementById('investigator-fields');
+        if (role === 'investigator') {
+            tabs[0].classList.remove('active');
+            tabs[1].classList.add('active');
+            document.getElementById('reg-heading').innerText = 'Investigator Registration';
+            invFields.style.display = 'block';
+            document.getElementById('login-switch-link').href = '/login?role=investigator';
+        } else {
+            tabs[0].classList.add('active');
+            tabs[1].classList.remove('active');
+            document.getElementById('reg-heading').innerText = 'Citizen Registration';
+            invFields.style.display = 'none';
+            document.getElementById('login-switch-link').href = '/login?role=user';
+        }
+    }
+
+    function checkPasswordStrength(val) {
+        const hasLen = val.length >= 8;
+        const hasUpper = /[A-Z]/.test(val);
+        const hasLower = /[a-z]/.test(val);
+        const hasNum = /[0-9]/.test(val);
+        const hasSym = /[!@#$%^&*(),.?":{}|<>\-_+=\[\]\\/]/.test(val);
+
+        updateRule('rule-len', hasLen);
+        updateRule('rule-upper', hasUpper);
+        updateRule('rule-lower', hasLower);
+        updateRule('rule-num', hasNum);
+        updateRule('rule-sym', hasSym);
+
+        const score = [hasLen, hasUpper, hasLower, hasNum, hasSym].filter(Boolean).length;
+        const bar = document.getElementById('strength-bar');
+        bar.style.width = (score * 20) + '%';
+        if (score <= 2) {
+            bar.style.background = '#ff4b2b';
+        } else if (score <= 4) {
+            bar.style.background = '#ffaa00';
+        } else {
+            bar.style.background = '#00ff88';
+        }
+    }
+
+    function updateRule(elementId, isValid) {
+        const el = document.getElementById(elementId);
+        if (isValid) {
+            el.classList.remove('invalid');
+            el.classList.add('valid');
+            el.innerText = el.innerText.replace('✖', '✔');
+        } else {
+            el.classList.remove('valid');
+            el.classList.add('invalid');
+            el.innerText = el.innerText.replace('✔', '✖');
+        }
+    }
+</script>
+</body>
+</html>

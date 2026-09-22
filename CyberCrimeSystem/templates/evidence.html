@@ -1,88 +1,150 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
-<title>Evidence Records</title>
-
-<style>
-
-body{
-background:#0a0a0a;
-color:white;
-font-family:Arial;
-}
-
-.container{
-width:80%;
-margin:auto;
-margin-top:50px;
-}
-
-h1{
-text-align:center;
-color:#00ffff;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-margin-top:30px;
-}
-
-th,td{
-border:1px solid #00ffff;
-padding:12px;
-text-align:center;
-}
-
-th{
-background:#001f1f;
-}
-
-tr:hover{
-background:#111;
-}
-
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Evidence Locker - Cyber Crime System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .evidence-container {
+            max-width: 1150px;
+            margin: 30px auto;
+            padding: 20px;
+            width: 100%;
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="container">
-
-<h1>Uploaded Evidence</h1>
-
-<table>
-
-<tr>
-<th>ID</th>
-<th>File Name</th>
-</tr>
-
-{% for file in files %}
-
-<tr>
-<td>{{ loop.index }}</td>
-<td>{{ file }}</td>
-</tr>
-
-{% endfor %}
-
-</table>
-
-<div style="text-align:center; margin-top:30px;">
-<a href="/dashboard" style="display:inline-block; padding:10px 25px; border:1px solid #00ffff; color:#00ffff; text-decoration:none; border-radius:6px; transition:0.3s;">&larr; Back to Dashboard</a>
+<div class="navbar">
+    <a href="/" class="logo">Cyber Crime Investigation System</a>
+    <div class="nav-links">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/upload" target="_blank">Upload Evidence</a>
+        <a href="/evidence" class="active">Evidence Locker</a>
+        <a href="/verify" target="_blank">Verify Hash</a>
+        <div class="font-selector-wrapper">
+            <select id="font-selector" class="font-selector-select" onchange="changeFont(this.value)" title="Choose UI Font">
+                <option value="Orbitron" style="font-family: 'Orbitron', sans-serif;">Orbitron (Futuristic)</option>
+                <option value="Rajdhani" style="font-family: 'Rajdhani', sans-serif;">Rajdhani (Tactical Tech)</option>
+                <option value="Share Tech Mono" style="font-family: 'Share Tech Mono', monospace;">Share Tech Mono (Hacker)</option>
+                <option value="Audiowide" style="font-family: 'Audiowide', cursive;">Audiowide (Cybernetic)</option>
+                <option value="Exo 2" style="font-family: 'Exo 2', sans-serif;">Exo 2 (Modern Clean)</option>
+                <option value="Electrolize" style="font-family: 'Electrolize', sans-serif;">Electrolize (Digital)</option>
+            </select>
+        </div>
+        <button id="theme-toggle-btn" class="theme-toggle-btn" onclick="toggleTheme()">☀️ Light Mode</button>
+        <a href="/logout" style="color: #ff6b6b;">Logout</a>
+    </div>
 </div>
 
+<div class="main-wrapper">
+    <div class="evidence-container">
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
+            <div>
+                <h1 style="color: var(--text-accent); font-size: 26px; margin: 0 0 6px 0; text-shadow: 0 0 15px var(--glow-cyan);">
+                    🗄️ Digital Evidence Locker
+                </h1>
+                <p style="color: var(--text-muted); font-size: 13px; margin: 0;">
+                    {% if active_case_id %}
+                    Displaying evidence catalog for Active Case: <strong>{{ active_case_id }}</strong>
+                    {% else %}
+                    Secure chain-of-custody archive for all investigative artifacts
+                    {% endif %}
+                </p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                {% if active_case_id %}
+                <a href="/evidence" class="btn btn-secondary btn-sm">Show All Evidence</a>
+                {% endif %}
+                <a href="/upload" target="_blank" class="btn btn-sm">➕ Upload Evidence</a>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert-box alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% if evidence_list %}
+        <table class="cyber-table">
+            <thead>
+                <tr>
+                    <th>Ref #</th>
+                    <th>Case ID</th>
+                    <th>Evidence File</th>
+                    <th>File Size</th>
+                    <th>SHA-256 Hash</th>
+                    <th>Uploaded By / Date</th>
+                    <th>Integrity Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ev in evidence_list %}
+                <tr>
+                    <td style="font-family: monospace; color: var(--text-accent);">#{{ ev.id }}</td>
+                    <td style="font-family: monospace; font-weight: bold;">
+                        <a href="/case/select/{{ ev.case_id }}" style="color: var(--text-accent); text-decoration: underline;" title="Set as Active Case">
+                            {{ ev.case_id }}
+                        </a>
+                    </td>
+                    <td>
+                        <strong>{{ ev.original_name }}</strong>
+                    </td>
+                    <td style="font-size: 12px; color: var(--text-muted);">
+                        {{ (ev.file_size / 1024)|round(1) }} KB
+                    </td>
+                    <td>
+                        <span style="font-family: monospace; font-size: 11px; color: var(--text-accent); background: rgba(0,255,255,0.08); padding: 3px 6px; border-radius: 4px;" title="{{ ev.sha256_hash }}">
+                            {{ ev.sha256_hash[:16] }}...
+                        </span>
+                    </td>
+                    <td style="font-size: 12px;">
+                        {{ ev.uploaded_by }}<br>
+                        <span style="font-size: 11px; color: var(--text-muted);">{{ ev.uploaded_at }}</span>
+                    </td>
+                    <td>
+                        <span class="badge {% if 'Verified' in ev.verification_status or 'Intact' in ev.verification_status %}badge-resolved{% else %}badge-investigating{% endif %}">
+                            {{ ev.verification_status }}
+                        </span>
+                    </td>
+                    <td>
+                        <!-- OPEN / VIEW EVIDENCE FILE (Fulfills user request!) -->
+                        <a href="/evidence/file/{{ ev.id }}" target="_blank" class="btn btn-sm" style="padding: 5px 12px; font-size: 11px;">
+                            👁️ Open Evidence
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div style="text-align: center; padding: 60px 20px; background: var(--bg-card); border: 1px dashed var(--border-cyan); border-radius: 12px;">
+            <div style="font-size: 40px; margin-bottom: 10px;">📂</div>
+            <p style="font-size: 16px; color: var(--text-muted); margin-bottom: 20px;">
+                No evidence files currently logged{% if active_case_id %} for case {{ active_case_id }}{% endif %}.
+            </p>
+            <a href="/upload" class="btn">Upload First Evidence File</a>
+        </div>
+        {% endif %}
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="/dashboard" class="btn btn-secondary btn-sm">&larr; Back to Dashboard</a>
+        </div>
+
+    </div>
 </div>
 
-<footer style="text-align:center; padding:20px 15px; color:#888; font-size:12px; border-top:1px solid rgba(0,255,255,0.2); background:rgba(0,0,0,0.7); margin-top:40px; letter-spacing:0.5px;">
-    <p style="margin:4px 0;">&copy; 2026 Cyber Crime Investigation System. All rights reserved.</p>
-    <p style="margin:4px 0; color:#00ffff; font-size:13px;">Developed by Gungun I &amp; Ayushi I.</p>
+<footer class="site-footer">
+    <p>&copy; 2026 Cyber Crime Investigation System. All rights reserved.</p>
+    <p class="dev-credit">Developed by Gungun I &amp; Ayushi I.</p>
 </footer>
 
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
 </body>
-
 </html>

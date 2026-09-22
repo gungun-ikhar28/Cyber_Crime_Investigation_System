@@ -1,78 +1,85 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
-<title>Evidence Verification Result</title>
-
-<style>
-
-body{
-background:#000;
-color:white;
-font-family:Arial;
-min-height:100vh;
-display:flex;
-flex-direction:column;
-}
-
-.box{
-background:#111;
-padding:40px;
-border-radius:12px;
-text-align:center;
-box-shadow:0 0 25px cyan;
-width:500px;
-}
-
-.hash{
-word-break:break-all;
-color:#00ffff;
-margin-top:15px;
-}
-
-.result{
-font-size:22px;
-margin-top:20px;
-}
-
-a{
-display:inline-block;
-margin-top:25px;
-padding:10px 20px;
-background:cyan;
-color:black;
-text-decoration:none;
-border-radius:6px;
-}
-
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integrity Verification Outcome - Cyber Crime System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-
 <body>
 
-<div style="flex:1; display:flex; justify-content:center; align-items:center;">
-<div class="box">
-
-<h2>Evidence Verification Result</h2>
-
-<div class="result">{{ result }}</div>
-
-<p>Generated SHA256 Hash:</p>
-
-<div class="hash">{{ generated_hash }}</div>
-
-<a href="/dashboard">Back to Dashboard</a>
-
-</div>
+<div class="navbar">
+    <a href="/" class="logo">Cyber Crime Investigation System</a>
+    <div class="nav-links">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/evidence">Evidence Locker</a>
+        <a href="/verify">Hash Verification</a>
+        <button id="theme-toggle-btn" class="theme-toggle-btn" onclick="toggleTheme()">☀️ Light Mode</button>
+        <a href="/logout" style="color: #ff6b6b;">Logout</a>
+    </div>
 </div>
 
-<footer style="text-align:center; padding:20px 15px; color:#888; font-size:12px; border-top:1px solid rgba(0,255,255,0.2); background:rgba(0,0,0,0.5); letter-spacing:0.5px; width:100%;">
-    <p style="margin:4px 0;">&copy; 2026 Cyber Crime Investigation System. All rights reserved.</p>
-    <p style="margin:4px 0; color:#00ffff; font-size:13px;">Developed by Gungun I &amp; Ayushi I.</p>
+<div class="main-wrapper">
+    <div class="verification-card-box" style="max-width: 600px;">
+        
+        <h2>Verification Outcome</h2>
+
+        {% if match_status is not none %}
+            {% if match_status %}
+            <div style="background: rgba(0, 255, 136, 0.15); border: 2px solid #00ff88; border-radius: 8px; padding: 18px; margin-bottom: 20px;">
+                <div style="font-size: 32px; margin-bottom: 6px;">🛡️ ✅</div>
+                <h3 style="color: #00ff88; margin: 0 0 6px 0;">INTEGRITY VERIFIED INTACT</h3>
+                <p style="margin: 0; font-size: 13px; color: var(--text-primary);">
+                    Cryptographic match confirmed. The evidence file matches the reference hash with zero byte deviation.
+                </p>
+            </div>
+            {% else %}
+            <div style="background: rgba(255, 75, 43, 0.15); border: 2px solid #ff4b2b; border-radius: 8px; padding: 18px; margin-bottom: 20px;">
+                <div style="font-size: 32px; margin-bottom: 6px;">⚠️ ❌</div>
+                <h3 style="color: #ff4b2b; margin: 0 0 6px 0;">HASH MISMATCH / INTEGRITY FAILURE</h3>
+                <p style="margin: 0; font-size: 13px; color: var(--text-primary);">
+                    The file content does not match the reference hash. The file may have been altered, corrupted, or tampered with.
+                </p>
+            </div>
+            {% endif %}
+        {% else %}
+            <div style="background: rgba(0, 255, 255, 0.12); border: 1px solid var(--border-cyan); border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                <h3 style="color: var(--text-accent); margin: 0 0 6px 0;">SHA-256 Hash Generated ✅</h3>
+                <p style="margin: 0; font-size: 13px; color: var(--text-primary);">
+                    Cryptographic fingerprint calculated successfully for file: <strong>{{ filename }}</strong>
+                </p>
+            </div>
+        {% endif %}
+
+        <div style="text-align: left; background: var(--bg-card); border: 1px solid var(--border-cyan); border-radius: 8px; padding: 16px; margin: 20px 0;">
+            <p style="margin: 4px 0; font-size: 13px;"><strong>Target File:</strong> {{ filename }}</p>
+            
+            <p style="margin: 12px 0 4px 0; font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Generated SHA-256 Hash:</p>
+            <div style="background: rgba(0,0,0,0.4); border: 1px solid rgba(0,255,255,0.3); border-radius: 6px; padding: 8px 10px; font-family: monospace; font-size: 12px; color: var(--text-accent); word-break: break-all;">
+                {{ generated_hash }}
+            </div>
+
+            {% if expected_hash %}
+            <p style="margin: 12px 0 4px 0; font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Expected Reference Hash:</p>
+            <div style="background: rgba(0,0,0,0.4); border: 1px solid rgba(0,255,255,0.3); border-radius: 6px; padding: 8px 10px; font-family: monospace; font-size: 12px; color: {% if match_status %}#00ff88{% else %}#ff6b6b{% endif %}; word-break: break-all;">
+                {{ expected_hash }}
+            </div>
+            {% endif %}
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+            <a href="/verify" class="btn btn-sm">Verify Another File</a>
+            <a href="/dashboard" class="btn btn-secondary btn-sm">Back to Dashboard</a>
+        </div>
+
+    </div>
+</div>
+
+<footer class="site-footer">
+    <p>&copy; 2026 Cyber Crime Investigation System. All rights reserved.</p>
+    <p class="dev-credit">Developed by Gungun I &amp; Ayushi I.</p>
 </footer>
 
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
 </body>
-
 </html>

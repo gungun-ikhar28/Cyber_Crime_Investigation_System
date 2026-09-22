@@ -1,79 +1,46 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
-<title>Cyber Crime Investigation System</title>
-
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&display=swap" rel="stylesheet">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Crime Investigation & Evidence Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-
 <body>
+
 <div id="particles-js"></div>
+
 <div class="navbar">
-
-<div class="logo">
-Cyber Crime Portal
+    <a href="/" class="logo">Cyber Crime Portal</a>
+    <div class="nav-links">
+        <a href="/" class="active">Home</a>
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+        <div class="font-selector-wrapper">
+            <select id="font-selector" class="font-selector-select" onchange="changeFont(this.value)" title="Choose UI Font">
+                <option value="Orbitron" style="font-family: 'Orbitron', sans-serif;">Orbitron (Futuristic)</option>
+                <option value="Rajdhani" style="font-family: 'Rajdhani', sans-serif;">Rajdhani (Tactical Tech)</option>
+                <option value="Share Tech Mono" style="font-family: 'Share Tech Mono', monospace;">Share Tech Mono (Hacker)</option>
+                <option value="Audiowide" style="font-family: 'Audiowide', cursive;">Audiowide (Cybernetic)</option>
+                <option value="Exo 2" style="font-family: 'Exo 2', sans-serif;">Exo 2 (Modern Clean)</option>
+                <option value="Electrolize" style="font-family: 'Electrolize', sans-serif;">Electrolize (Digital)</option>
+            </select>
+        </div>
+        <button id="theme-toggle-btn" class="theme-toggle-btn" onclick="toggleTheme()">☀️ Light Mode</button>
+    </div>
 </div>
 
-<div class="nav-links">
-<a href="/">Home</a>
-<a href="/login">Login</a>
-<a href="#">Register</a>
-</div>
-
-</div>
-
-
-<div class="hero">
-
-<h1>Unified Cyber Crime Investigation and Evidence Management System</h1>
-
-<p>Secure Digital Evidence Handling and Cyber Crime Investigation Platform</p>
-
-<a href="/complaint" class="btn">File Complaint</a>
-
-<a href="/login" class="btn">Investigator Login</a>
-<script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
-
-<script>
-
-particlesJS("particles-js", {
-
-"particles": {
-
-"number": {
-
-"value": 80
-
-},
-
-"color": {
-
-"value": "#00ffff"
-
-},
-
-"size": {
-
-"value": 3
-
-},
-
-"move": {
-
-"speed": 2
-
-}
-
-}
-
-});
-
-</script>
-
+<div class="main-wrapper">
+    <div class="hero">
+        <h1>Unified Cyber Crime Investigation and Evidence Management System</h1>
+        
+        <p>Secure Digital Evidence Handling and Cyber Crime Investigation Platform</p>
+        
+        <div class="hero-btn-group">
+            <a href="/login?role=user" class="btn">Citizen Portal</a>
+            <a href="/login?role=investigator" class="btn">Investigator Login</a>
+        </div>
+    </div>
 </div>
 
 <footer class="site-footer">
@@ -81,6 +48,38 @@ particlesJS("particles-js", {
     <p class="dev-credit">Developed by Gungun I &amp; Ayushi I.</p>
 </footer>
 
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+<script>
+    particlesJS("particles-js", {
+        "particles": {
+            "number": { "value": 75 },
+            "color": { "value": "#00ffff" },
+            "shape": { "type": "circle" },
+            "opacity": { "value": 0.5 },
+            "size": { "value": 3 },
+            "line_linked": {
+                "enable": true,
+                "distance": 150,
+                "color": "#00ffff",
+                "opacity": 0.35,
+                "width": 1
+            },
+            "move": {
+                "enable": true,
+                "speed": 2,
+                "direction": "none",
+                "out_mode": "out"
+            }
+        },
+        "interactivity": {
+            "detect_on": "canvas",
+            "events": {
+                "onhover": { "enable": true, "mode": "grab" },
+                "onclick": { "enable": true, "mode": "push" }
+            }
+        }
+    });
+</script>
 </body>
-
 </html>
